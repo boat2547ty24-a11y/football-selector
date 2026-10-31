@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Football Selector Pro</title>
+<style>
+:root{--bg:#0a1020;--card:#121d32;--card2:#192944;--line:#2b3b59;--txt:#eef4ff;--muted:#9cacc8;--green:#42d6a0;--amber:#f4c56a;--red:#ff7d88}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 75% -10%,#203b60 0,transparent 45%),var(--bg);color:var(--txt);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1100px;margin:auto;padding:22px 15px 55px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.logo{font-weight:900;letter-spacing:.08em}.live{font-size:12px;color:var(--green);border:1px solid #286b59;padding:7px 12px;border-radius:30px}
+h1{font-size:clamp(29px,5vw,48px);line-height:1.1;margin:30px 0 8px}h1 em{font-style:normal;color:var(--green)}.lead{color:var(--muted);margin:0 0 22px}
+.layout{display:grid;grid-template-columns:1.1fr .9fr;gap:15px}.card{background:linear-gradient(150deg,var(--card),#10192a);border:1px solid var(--line);border-radius:18px;padding:19px;margin-bottom:15px}.card h2{font-size:17px;margin:0 0 14px}
+label{display:block;font-size:12px;color:var(--muted);margin:11px 0 6px}input,select{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px;background:#0a1426;color:var(--txt);font:inherit;min-width:0}.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+button{cursor:pointer;border:0;border-radius:10px;padding:12px 16px;font-weight:750}.primary{background:var(--green);color:#05241a}.secondary{background:var(--card2);border:1px solid var(--line);color:var(--txt)}button:disabled{opacity:.5;cursor:wait}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:17px}.status{font-size:13px;color:var(--amber);min-height:22px;margin-top:12px}.hint{font-size:12px;line-height:1.6;color:var(--muted)}.steps{line-height:1.9;font-size:14px}.steps b{color:var(--green)}.warning{color:#ffd48a}
+.resulthead{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.count{font-size:12px;color:var(--green);border:1px solid #286b59;border-radius:30px;padding:6px 10px}.match{background:#0d1729;border:1px solid var(--line);border-radius:13px;padding:14px;margin-top:10px;display:grid;grid-template-columns:1fr auto;gap:12px}.teams{font-weight:800}.meta{font-size:12px;color:var(--muted);margin-top:5px}.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.chip{font-size:11px;padding:4px 8px;border-radius:30px;background:#203c39;color:var(--green)}.chip.gold{background:#3c3423;color:var(--amber)}.rating{text-align:right;color:var(--green);font-size:23px;font-weight:900}.rating small{display:block;color:var(--muted);font-size:10px;font-weight:500}.empty{border:1px dashed var(--line);border-radius:13px;text-align:center;padding:25px;color:var(--muted)}details{font-size:12px;color:var(--muted);margin-top:10px}summary{cursor:pointer;color:var(--txt)}
+@media(max-width:760px){.layout{grid-template-columns:1fr}.two{grid-template-columns:1fr 1fr}.card{padding:15px}}@media(max-width:400px){.two{grid-template-columns:1fr}}
+</style>
+</head>
+<body><main>
+<div class="top"><div class="logo">⚽ AI FOOTBALL SELECTOR</div><div class="live">MATCH ANALYSIS · TOP PICKS</div></div>
+<h1>คัดบอล <em>TOP 5</em></h1><p class="lead">ค้นหาโปรแกรมจริง วิเคราะห์ฟอร์มและราคา O/U ที่มีใน API แล้วจัดอันดับคู่ที่เข้าเกณฑ์</p>
+<div class="layout">
+<section class="card">
+<h2>ตั้งค่าเงื่อนไขการคัดเลือก</h2>
+<label>API-Football API Key</label><input id="key" type="password" placeholder="ใส่ API Key จาก dashboard.api-football.com">
+<div class="two">
+<div><label>วันที่แข่งขัน</label><input id="date" type="date"></div>
+<div><label>จำนวนคู่ที่ต้องการ</label><select id="n"><option>5</option><option>10</option><option>15</option></select></div>
+</div>
+<div class="two">
+<div><label>ราคา O/U ต่ำสุด</label><input id="omin" type="number" min="0.5" max="9.5" step=".5" value="3.5"></div>
+<div><label>ราคา O/U สูงสุด</label><input id="omax" type="number" min="0.5" max="10" step=".5" value="4.5"></div>
+</div>
+<div class="two">
+<div><label>ค่าเฉลี่ยประตูรวมขั้นต่ำ (ย้อนหลัง)</label><input id="gmin" type="number" min="0" max="10" step=".1" value="2.8"></div>
+<div><label>ฟอร์มย้อนหลัง</label><select id="last"><option value="5">5 นัด</option><option value="10">10 นัด</option></select></div>
+</div>
+<label>รูปแบบเกม</label><select id="mode"><option value="both">ทั้งสองทีมมีโอกาสยิง (BTTS)</option><option value="one">เน้นทีมเดียวมีโอกาสยิงขาด</option><option value="either">ได้ทั้งสองรูปแบบ</option></select>
+<label>เจ้ามือที่ใช้เทียบราคา</label><select id="book"><option value="all">ทุกเจ้ามือที่มีข้อมูล</option><option value="bet365">Bet365 (ถ้ามีในข้อมูล)</option></select>
+<div class="actions"><button class="primary" id="go">ค้นหา 5 คู่ให้อัตโนมัติ</button><button class="secondary" id="sample">ดูตัวอย่าง</button></div>
+<div class="status" id="status"></div>
+<p class="hint">API Key จะถูกใช้จากเบราว์เซอร์นี้เพื่อเรียก API โดยตรง ไม่ส่งให้ผู้จัดทำเว็บไซต์ แต่ไม่ควรนำไปเผยแพร่ในเว็บไซต์สาธารณะ</p>
+</section>
+<section class="card">
+<h2>วิธีคัดเลือก</h2>
+<div class="steps"><b>01</b> ดึงโปรแกรมแข่งขันตามวันที่เลือก<br><b>02</b> ดึงราคา O/U ก่อนแข่งจากเจ้ามือที่มีข้อมูล<br><b>03</b> ตรวจฟอร์มและสถิติประตูย้อนหลัง<br><b>04</b> คัดตามช่วงราคาและค่าเฉลี่ยประตู<br><b>05</b> เรียงคะแนนแล้วแสดงคู่ที่ดีที่สุด</div>
+<details open><summary>การอ่านคะแนน</summary><p>คะแนนเป็นดัชนีจัดอันดับจากราคาและสถิติย้อนหลัง ไม่ใช่เปอร์เซ็นต์ความน่าจะเป็นที่ผ่านการสอบเทียบทางสถิติ และไม่รับประกันผลการแข่งขัน</p></details>
+<details><summary>ข้อมูลที่อาจไม่มี</summary><p>ราคา O/U อาจไม่มีในบางลีกหรือบางคู่ และ API อาจจำกัดจำนวนคำขอต่อวันตามแพ็กเกจ หากราคาไม่มี ระบบจะไม่แต่งราคาให้และจะแสดงแยกไว้</p></details>
+</section></div>
+<section class="card">
+<div class="resulthead"><h2 style="margin:0">ผลการคัดเลือก</h2><span class="count" id="count">รอค้นหา</span></div>
+<div id="results" style="margin-top:12px"><div class="empty">ตั้งค่าวันแข่งขันและกดค้นหาเพื่อเริ่มวิเคราะห์</div></div>
+</section>
+<p class="hint">ข้อมูลราคาและสถิติขึ้นกับลีก เจ้าของข้อมูล และแพ็กเกจ API โปรดตรวจสอบราคา/ข่าวทีมจากแหล่งทางการก่อนตัดสินใจ เว็บไซต์นี้เป็นเครื่องมือวิเคราะห์ข้อมูล ไม่ใช่คำแนะนำการเดิมพัน</p>
+</main>
+<script>
+const $=x=>document.getElementById(x);
+const d=new Date();$('date').value=new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10);
+const api=async(path,key)=>{const r=await fetch('https://v3.football.api-sports.io'+path,{headers:{'x-apisports-key':key}});if(!r.ok)throw Error('API HTTP '+r.status);const j=await r.json();if(j.errors&&Object.keys(j.errors).length)throw Error(JSON.stringify(j.errors));return j.response||[]};
+const status=t=>$('status').textContent=t;
+function render(rows,extra=''){ $('count').textContent=rows.length+' คู่';$('results').innerHTML=rows.length?rows.map((m,i)=>`<article class="match"><div><div class="teams">${i+1}. ${m.home} <span style="color:#9cacc8">vs</span> ${m.away}</div><div class="meta">${m.league} · ${m.time}</div><div class="chips"><span class="chip">${m.ou||'ไม่พบราคา O/U'}</span><span class="chip">${m.form||'สถิติไม่ครบ'}</span><span class="chip gold">${m.type}</span></div><div class="meta">${m.why}</div></div><div class="rating">${m.score}<small>คะแนนคัดเลือก</small></div></article>`).join(''):'<div class="empty">ไม่พบคู่ที่ผ่านเกณฑ์ ลองขยายช่วงราคา หรือลดค่าเฉลี่ยประตูขั้นต่ำ</div>'}
+function sample(){render([
+{home:'ตัวอย่างทีม A',away:'ตัวอย่างทีม B',league:'ลีกตัวอย่าง',time:'19:00',ou:'O/U 3.5 · ตัวอย่าง',form:'เฉลี่ย 3.4 ประตู',type:'ทั้งสองทีมยิง',score:92,why:'ข้อมูลจำลองเพื่อแสดงหน้าตาผลลัพธ์ ไม่ใช่คู่แข่งขันจริง'},
+{home:'ตัวอย่างทีม C',away:'ตัวอย่างทีม D',league:'ลีกตัวอย่าง',time:'20:00',ou:'O/U 4.0 · ตัวอย่าง',form:'เฉลี่ย 3.2 ประตู',type:'ทีมเดียวอาจยิงขาด',score:88,why:'ข้อมูลจำลองเพื่อแสดงหน้าตาผลลัพธ์ ไม่ใช่คู่แข่งขันจริง'},
+{home:'ตัวอย่างทีม E',away:'ตัวอย่างทีม F',league:'ลีกตัวอย่าง',time:'21:00',ou:'O/U 3.5 · ตัวอย่าง',form:'เฉลี่ย 3.1 ประตู',type:'ทั้งสองทีมยิง',score:85,why:'ข้อมูลจำลองเพื่อแสดงหน้าตาผลลัพธ์ ไม่ใช่คู่แข่งขันจริง'},
+{home:'ตัวอย่างทีม G',away:'ตัวอย่างทีม H',league:'ลีกตัวอย่าง',time:'22:00',ou:'O/U 4.5 · ตัวอย่าง',form:'เฉลี่ย 3.0 ประตู',type:'เกมเปิดแลก',score:82,why:'ข้อมูลจำลองเพื่อแสดงหน้าตาผลลัพธ์ ไม่ใช่คู่แข่งขันจริง'},
+{home:'ตัวอย่างทีม I',away:'ตัวอย่างทีม J',league:'ลีกตัวอย่าง',time:'23:00',ou:'O/U 3.5 · ตัวอย่าง',form:'เฉลี่ย 2.9 ประตู',type:'ทั้งสองทีมยิง',score:79,why:'ข้อมูลจำลองเพื่อแสดงหน้าตาผลลัพธ์ ไม่ใช่คู่แข่งขันจริง'}
+]);status('กำลังแสดงข้อมูลจำลอง ไม่ใช่ผลค้นหาจริง')}
+$('sample').onclick=sample;
+function parseOdds(entry,min,max,bookChoice){
+ let best=null;
+ for(const b of (entry.bookmakers||[])){
+  if(bookChoice==='bet365'&&!/bet365/i.test(b.name||''))continue;
+  for(const bet of (b.bets||[])){
+   if(!/over\/under|goals over\/under|total goals/i.test(bet.name||''))continue;
+   for(const v of (bet.values||[])){
+    const text=(v.value||'').toString();const line=Number((text.match(/(\d+(?:\.\d+)?)/)||[])[1]);
+    if(!Number.isFinite(line)||line<min||line>max)continue;
+    if(!/over/i.test(text))continue;
+    const odd=Number(v.odd);if(!Number.isFinite(odd))continue;
+    if(!best||Math.abs(line-(min+max)/2)<Math.abs(best.line-(min+max)/2))best={line,odd,book:b.name};
+   }
+  }
+ }
+ return best;
+}
+$('go').onclick=async()=>{
+ const key=$('key').value.trim(),date=$('date').value,min=+$('omin').value,max=+$('omax').value,gmin=+$('gmin').value,last=+$('last').value,n=+$('n').value,mode=$('mode').value,book=$('book').value;
+ if(!key)return status('กรุณาใส่ API Key ก่อนค้นหา');if(!date||min>max)return status('ตรวจสอบวันที่และช่วง O/U อีกครั้ง');
+ $('go').disabled=true;status('กำลังโหลดโปรแกรมและราคา O/U…');$('results').innerHTML='<div class="empty">กำลังวิเคราะห์ข้อมูล กรุณารอสักครู่</div>';
+ try{
+  const [fixtures,odds]=await Promise.all([api(`/fixtures?date=${date}&timezone=Asia/Bangkok`,key),api(`/odds?date=${date}&timezone=Asia/Bangkok&page=1`,key)]);
+  if(!fixtures.length){render([]);return status('ไม่พบโปรแกรมแข่งขันในวันที่เลือก')}
+  const oddsMap=new Map(odds.map(o=>[String(o.fixture?.id),o]));
+  const candidates=fixtures.filter(f=>['NS','TBD'].includes(f.fixture.status.short));
+  let rows=[],checked=0;
+  // จำกัดการเรียกสถิติไม่เกิน 5 คู่แรกที่มีราคา เพื่อควบคุมโควตา API
+  const withOdds=candidates.map(f=>({f,o:parseOdds(oddsMap.get(String(f.fixture.id))||{},min,max,book)})).filter(x=>x.o);
+  for(const {f,o} of withOdds.slice(0,Math.max(5,n*2))){
+   const h=f.teams.home,a=f.teams.away;
+   try{
+    const [hp,ap]=await Promise.all([api(`/fixtures?team=${h.id}&last=${last}&status=FT`,key),api(`/fixtures?team=${a.id}&last=${last}&status=FT`,key)]);
+    if(!hp.length||!ap.length)continue;
+    const goalsFor=(list,id)=>list.reduce((s,x)=>s+(x.teams.home.id===id?x.goals.home:x.goals.away),0)/list.length;
+    const goalsAgainst=(list,id)=>list.reduce((s,x)=>s+(x.teams.home.id===id?x.goals.away:x.goals.home),0)/list.length;
+    const hgf=goalsFor(hp,h.id),agf=goalsFor(ap,a.id),hga=goalsAgainst(hp,h.id),aga=goalsAgainst(ap,a.id);
+    const projected=hgf+aga/2+agf+hga/2; // indicator only; not a calibrated forecast
+    const bttsH=hp.filter(x=>(x.teams.home.id===h.id?x.goals.home:x.goals.away)>0&&(x.teams.home.id===h.id?x.goals.away:x.goals.home)>0).length/hp.length;
+    const bttsA=ap.filter(x=>(x.teams.home.id===a.id?x.goals.home:x.goals.away)>0&&(x.teams.home.id===a.id?x.goals.away:x.goals.home)>0).length/ap.length;
+    const both=(bttsH+bttsA)/2;
+    if(projected<gmin)continue;
+    if(mode==='both'&&both<.5)continue;
+    if(mode==='one'&&Math.max(hgf,agf)<1.8)continue;
+    const lineFit=1-Math.abs(o.line-(min+max)/2)/Math.max(.5,(max-min)/2+.5);
+    const score=Math.round(Math.min(99,50+Math.min(projected,5)*5+both*12+lineFit*8));
+    const typ=both>=.6?'มีแนวโน้มยิงทั้งสองทีม':Math.max(hgf,agf)>=1.8?'ทีมหนึ่งมีโอกาสยิงเด่น':'เกมมีแนวโน้มทำประตู';
+    rows.push({home:h.name,away:a.name,league:f.league.name,time:new Date(f.fixture.date).toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit',timeZone:'Asia/Bangkok'}),ou:`O/U ${o.line} · ${o.book}`,form:`คาดการณ์จากค่าเฉลี่ย ${projected.toFixed(1)} ประตู`,type:typ,score,why:`ยิงได้เฉลี่ย ${h.name} ${hgf.toFixed(1)} · ${a.name} ${agf.toFixed(1)} ประตู/นัด`});
+    checked++;
+   }catch(err){/* Skip fixtures with incomplete statistics */}
+  }
+  rows.sort((a,b)=>b.score-a.score);render(rows.slice(0,n));
+  status(`พบโปรแกรม ${fixtures.length} คู่ · มีราคาเข้าเกณฑ์ ${withOdds.length} คู่ · วิเคราะห์สถิติสำเร็จ ${checked} คู่`);
+  if(!withOdds.length)status('พบโปรแกรม แต่ไม่มีราคา O/U ในช่วงที่เลือกจากข้อมูล API วันนี้ ลองขยายช่วงหรือเลือกทุกเจ้ามือ');
+ }catch(e){status('เรียกข้อมูลไม่สำเร็จ: '+e.message+' · ตรวจสอบ API Key, โควตา และแพ็กเกจ')}
+ finally{$('go').disabled=false}
+};
+</script></body></html>
